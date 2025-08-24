@@ -1,0 +1,19 @@
+services:
+  app:
+    image: ${IMAGE_NAME:-}
+    platform: linux/amd64
+    env_file:
+      - ../.env
+    build:
+      context: ..
+      dockerfile: docker/Containerfile
+      ssh:
+        - default=${SSH_AUTH_SOCK}
+      args:
+        APP_GROUP_ID: ${APP_GROUP_ID:-65534}
+        APP_USER_ID: ${APP_USER_ID:-65534}
+    environment:
+      SSH_AUTH_SOCK: /run/ssh.sock
+    volumes:
+      - ../src:/var/tmp
+      - ${SSH_AUTH_SOCK}:/run/ssh.sock

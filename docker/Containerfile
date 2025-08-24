@@ -1,0 +1,19 @@
+FROM python:latest
+
+ARG APP_GROUP_ID="65534"
+ARG APP_USER_ID="65534"
+
+RUN getent group ${APP_GROUP_ID} || groupmod -g ${APP_GROUP_ID} nobody && \
+	getent passwd ${APP_USER_ID} || usermod -u ${APP_USER_ID} nobody
+
+ENV HOME="/var/tmp"
+
+RUN mkdir -p "${HOME}"
+RUN chown -R ${APP_USER}:${APP_GROUP} "${HOME}"
+
+WORKDIR "${HOME}"
+COPY ../src/requirements.txt .
+RUN pip3 install -r requirements.txt
+
+USER $APP_USER_ID:$APP_GROUP_ID
+CMD ["bash"]
